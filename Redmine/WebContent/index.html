@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script language="javascript">
+    var xmlhttp;
+    function init() {
+       // put more code here in case you are concerned about browsers that do not provide XMLHttpRequest object directly
+       xmlhttp = new XMLHttpRequest();
+    }
+    
+    function getdetails() {
+        var empno = document.getElementById("empno");
+        var url = "http://localhost:8080/Redmine/crunchify/preview/" + empno.value;
+        xmlhttp.open('GET',url,true);
+        xmlhttp.send(null);
+        xmlhttp.onreadystatechange = function() {
+
+               var transcriptID = document.getElementById("transcriptID");
+               
+               if (xmlhttp.readyState == 4) {
+                  if ( xmlhttp.status == 200) {
+                       var det = eval( "(" +  xmlhttp.responseText + ")");
+                      
+                          transcriptID.textContent = det.issuesss;
+                          
+                       
+                 }
+                 else
+                       alert("Error ->" + xmlhttp.responseText);
+              }
+        };
+    }
+  
+    
+    function getdetailsofall() {
+    	   var projectName = document.getElementById("projectName");
+
+        var url = "http://localhost:8080/Redmine/crunchify/project/" + projectName.value ;
+          xmlhttp.open('GET',url,true);
+          xmlhttp.send(null);
+           xmlhttp.onreadystatechange = function() {
+
+                 var transcriptID = document.getElementById("transcriptID");
+                 
+                 if (xmlhttp.readyState == 4) {
+                    if ( xmlhttp.status == 200) {
+                     var all = eval ( "(" + xmlhttp.responseText + ")");
+                     
+                     var result = all.allissues;
+                //     var mySplitResult = result.split("Issue");
+
+                  /*   for(i = 0; i < mySplitResult.length; i++){
+
+                  	   transcriptID.textContent = mySplitResult[i]
+                  //   document.write("<br />"  + mySplitResult[i]);
+                     }*/
+                     
+                    transcriptID.textContent = result;
+                     }
+                   else
+                         alert("Error ->" + xmlhttp.responseText);
+                }
+          };
+      } 
+    
+  
+     function takeAction() {
+    	 var s = document.getElementById("s")
+    	 var url = "http://localhost:8080/Redmine/crunchify/tickets/" + s.value;
+    	 xmlhttp.open('PUT',url,true);
+         xmlhttp.send(null);
+         xmlhttp.onreadystatechange = function() {
+
+     };
+     }
+     function check() {
+    	 var s = document.getElementById("s");
+    	 if (s.value == ""){
+    		 
+    			 alert("no file selected ");
+    			 
+    	 }
+    	 else{
+    		 alert(" uploaded " + s.value);
+    	 }
+     }
+     
+     </script>
+     </head>
+<body  onload="init()">
+<h1>Redmine</h1>
+Project : <input id="projectName" size="50" name="Project"  type="text"><br>
+   <table>
+   <tr>
+       <td>Ticket Id :  </td>
+       <td><input type="text" id="empno" size="10"/>  <input type="button" value="Get Details" onclick="getdetails()"/>
+   <input type="button" value="All Tickets" onclick="getdetailsofall()"/></tr>
+  
+
+   <tr>
+       <td>Ticket Info : </td>
+     <!--  <td><input type="text" id="transcriptID" size="200"/> -->
+         <td style=" vertical-align: top;" >
+            <textarea id="transcriptID" rows="25" cols="125" readonly="true" ></textarea> 
+   </tr>
+   
+   </table>
+	
+ 
+	<form action="rest/file/upload" method="post" enctype="multipart/form-data">
+ 
+	   <p>
+		Select a file : <input type="file" name="file" size="45" id = "s"/>
+	   </p>
+ 
+	   <input type="submit" value="Upload It" onclick="check()"/>
+	</form>
+	
+	 <input type="button" value="Submit file" onclick="takeAction()"/> 
+	
+ 
+</body>
+</html>
